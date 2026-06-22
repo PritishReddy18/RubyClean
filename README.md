@@ -1,6 +1,6 @@
-# RubyClean (v1.0.0)
+# RubyClean
 
-A  C++ CLI tool that scans projects for common development junk folders and helps clean them up.
+A simple C++ CLI tool that scans projects for common development junk folders and helps clean them up.
 
 ## Features
 
@@ -35,15 +35,11 @@ g++ src/main.cpp src/cli/CommandParser.cpp src/scanner/Scanner.cpp -o RubyClean.
 
 ### Scan
 
--- this scan helps you to get all items which are fk junk
-
 ```bash
 RubyClean.exe scan .
 ```
 
 ### Clean
-
--- clean those fk junk
 
 ```bash
 RubyClean.exe clean .
@@ -86,4 +82,4 @@ Cleanup completed.
 
 ---
 
-thanks for viewing my project !!
+Built while learning C++ and CLI application development.
