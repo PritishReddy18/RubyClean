@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.5.0] - 2026-06-23
+
+### Added
+
+- Interactive menu system
+- System cleaner module
+- User Temp cleanup
+- Windows Temp cleanup
+- Crash Dumps cleanup
+- Internet Cache cleanup
+- Thumbnail Cache cleanup
+- Windows Update Cache cleanup
+- Recycle Bin analysis
+- Downloads analysis
+- Recoverable storage reporting
+- Human-readable storage formatting
+- Professional installer support
+- Desktop shortcut creation
+- Start menu shortcut creation
+
+### Improved
+
+- Better terminal interface
+- Improved storage reporting
+- Cleaner menu navigation
+- More accurate size calculations
+- Better system scan presentation
+
+### Fixed
+
+- Ignore rule loading issues
+- Path matching issues
+- Temporary file detection bugs
+- Various filesystem scanning bugs
+
 ## v1.4.0
 
 ### Added
