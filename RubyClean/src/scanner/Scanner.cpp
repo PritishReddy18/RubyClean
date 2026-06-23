@@ -1,9 +1,52 @@
 #include "Scanner.h"
-
+#include <iostream>
 #include <filesystem>
 #include <algorithm>
+#include <fstream>
 
 namespace fs = std::filesystem;
+
+std::vector<std::string> Scanner::loadIgnoreRules()
+{
+    std::vector<std::string> rules;
+
+    std::ifstream file(".rubycleanignore");
+
+    if (!file.is_open())
+        return rules;
+
+    std::string line;
+
+    while (std::getline(file, line))
+    {
+        if (!line.empty() && line.back() == '\r')
+        {
+            line.pop_back();
+        }
+
+        if (!line.empty())
+        {
+            rules.push_back(line);
+        }
+    }
+
+    return rules;
+}
+
+bool Scanner::isIgnored(
+    const std::string& path,
+    const std::vector<std::string>& ignoreRules)
+{
+    for (const auto& rule : ignoreRules)
+    {
+        if (path.find(rule) != std::string::npos)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 bool Scanner::isJunkDirectory(
     const std::string& folderName)
@@ -63,11 +106,20 @@ std::vector<JunkItem> Scanner::scan(
 {
     std::vector<JunkItem> junkItems;
 
+    auto ignoreRules =
+        loadIgnoreRules();
+
     try
     {
         for (const auto& entry :
              fs::recursive_directory_iterator(rootPath))
         {
+            std::string fullPath =
+                entry.path().string();
+
+            if (isIgnored(fullPath, ignoreRules))
+                continue;
+
             if (entry.is_directory())
             {
                 std::string folderName =
@@ -77,8 +129,7 @@ std::vector<JunkItem> Scanner::scan(
                 {
                     JunkItem item;
 
-                    item.path =
-                        entry.path().string();
+                    item.path = fullPath;
 
                     item.size =
                         calculateFolderSize(item.path);
@@ -97,8 +148,7 @@ std::vector<JunkItem> Scanner::scan(
                 {
                     JunkItem item;
 
-                    item.path =
-                        entry.path().string();
+                    item.path = fullPath;
 
                     item.size =
                         entry.file_size();
@@ -122,20 +172,28 @@ std::vector<FolderInfo> Scanner::getLargestFolders(
 {
     std::vector<FolderInfo> folders;
 
+    auto ignoreRules =
+        loadIgnoreRules();
+
     try
     {
         for (const auto& entry :
              fs::directory_iterator(rootPath))
         {
+            std::string fullPath =
+                entry.path().string();
+
+            if (isIgnored(fullPath, ignoreRules))
+                continue;
+
             if (entry.is_directory())
             {
                 FolderInfo info;
 
-                info.path =
-                    entry.path().string();
+                info.path = fullPath;
 
                 info.size =
-                    calculateFolderSize(info.path);
+                    calculateFolderSize(fullPath);
 
                 folders.push_back(info);
             }
@@ -162,18 +220,26 @@ ScanStats Scanner::getStats(
 {
     ScanStats stats;
 
+    auto ignoreRules =
+        loadIgnoreRules();
+
     try
     {
         for (const auto& entry :
              fs::recursive_directory_iterator(rootPath))
         {
+            std::string fullPath =
+                entry.path().string();
+
+            if (isIgnored(fullPath, ignoreRules))
+                continue;
+
             if (entry.is_directory())
             {
                 stats.foldersScanned++;
 
                 uintmax_t size =
-                    calculateFolderSize(
-                        entry.path().string());
+                    calculateFolderSize(fullPath);
 
                 if (size >
                     stats.largestFolderSize)
@@ -182,7 +248,7 @@ ScanStats Scanner::getStats(
                         size;
 
                     stats.largestFolder =
-                        entry.path().string();
+                        fullPath;
                 }
 
                 if (isJunkDirectory(
@@ -191,7 +257,6 @@ ScanStats Scanner::getStats(
                     stats.junkFolders++;
                 }
             }
-
             else if (entry.is_regular_file())
             {
                 stats.filesScanned++;
@@ -206,7 +271,7 @@ ScanStats Scanner::getStats(
                         size;
 
                     stats.largestFile =
-                        entry.path().string();
+                        fullPath;
                 }
 
                 if (isJunkFile(

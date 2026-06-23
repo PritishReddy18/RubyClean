@@ -10,7 +10,8 @@
 class Scanner
 {
 public:
-    std::vector<JunkItem> scan(const std::string& rootPath);
+    std::vector<JunkItem> scan(
+        const std::string& rootPath);
 
     std::vector<FolderInfo> getLargestFolders(
         const std::string& rootPath);
@@ -27,4 +28,10 @@ private:
 
     uintmax_t calculateFolderSize(
         const std::string& path);
+
+    std::vector<std::string> loadIgnoreRules();
+
+    bool isIgnored(
+        const std::string& path,
+        const std::vector<std::string>& ignoreRules);
 };

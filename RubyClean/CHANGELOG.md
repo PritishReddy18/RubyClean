@@ -13,7 +13,7 @@
 
 * Better scan output formatting
 * Improved report readability
-* More useful cleanup information
+* More useful cleanup informations
 
 ## v1.1.0
 
