@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.2.0
+
+### Added
+
+* Largest junk item analysis (`largest` command)
+* Project statistics (`stats` command)
+* Largest file and folder tracking
+* Top recoverable junk item reporting
+
+### Improved
+
+* Better scan output formatting
+* Improved report readability
+* More useful cleanup information
+
 ## v1.1.0
 
 ### Added
