@@ -33,19 +33,108 @@ int main(int argc, char* argv[])
         parser.parse(argc, argv);
 
     if (cmd.action != "scan" &&
-        cmd.action != "clean")
+        cmd.action != "clean" &&
+        cmd.action != "largest" &&
+        cmd.action != "stats")
     {
         std::cout
             << "\nRubyClean\n\n"
             << "Usage:\n"
             << "RubyClean scan .\n"
             << "RubyClean scan . export\n"
-            << "RubyClean clean .\n";
+            << "RubyClean clean .\n"
+            << "RubyClean largest .\n"
+            << "RubyClean stats .\n";
 
         return 0;
     }
 
     Scanner scanner;
+
+    if(cmd.action == "largest")
+    {
+        auto junk =
+            scanner.scan(cmd.path);
+
+        std::sort(
+            junk.begin(),
+            junk.end(),
+            [](const JunkItem& a,
+            const JunkItem& b)
+            {
+                return a.size > b.size;
+            });
+
+        std::cout
+            << "\nTop Largest Junk Items\n\n";
+
+        int rank = 1;
+
+        for(const auto& item : junk)
+        {
+            if(rank > 10)
+                break;
+
+            std::cout
+                << rank
+                << ". "
+                << item.path
+                << " | "
+                << formatSize(item.size)
+                << "\n";
+
+            rank++;
+        }
+
+        if(junk.empty())
+        {
+            std::cout
+                << "No junk items found.\n";
+        }
+
+        return 0;
+    }
+
+    if(cmd.action == "stats")
+    {
+        auto stats =
+            scanner.getStats(cmd.path);
+
+        std::cout
+            << "\nRubyClean Statistics\n\n";
+
+        std::cout
+            << "Folders Scanned : "
+            << stats.foldersScanned
+            << "\n";
+
+        std::cout
+            << "Files Scanned   : "
+            << stats.filesScanned
+            << "\n\n";
+
+        std::cout
+            << "Junk Folders    : "
+            << stats.junkFolders
+            << "\n";
+
+        std::cout
+            << "Junk Files      : "
+            << stats.junkFiles
+            << "\n\n";
+
+        std::cout
+            << "Largest Folder  : "
+            << stats.largestFolder
+            << "\n";
+
+        std::cout
+            << "Largest File    : "
+            << stats.largestFile
+            << "\n";
+
+        return 0;
+    }
 
     auto junk =
         scanner.scan(cmd.path);
