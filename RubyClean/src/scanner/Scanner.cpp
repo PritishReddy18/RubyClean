@@ -19,6 +19,19 @@ bool Scanner::isJunkDirectory(const std::string& folderName)
         folderName == "obj";
 }
 
+bool Scanner::isJunkFile(const std::string& fileName)
+{
+    fs::path p(fileName);
+
+    std::string ext =
+        p.extension().string();
+
+    return
+        ext == ".log" ||
+        ext == ".tmp" ||
+        ext == ".temp";
+}
+
 uintmax_t Scanner::calculateFolderSize(
     const std::string& path)
 {
@@ -52,23 +65,46 @@ std::vector<JunkItem> Scanner::scan(
         for (const auto& entry :
              fs::recursive_directory_iterator(rootPath))
         {
-            if (!entry.is_directory())
-                continue;
-
-            std::string folderName =
-                entry.path().filename().string();
-
-            if (isJunkDirectory(folderName))
+            if (entry.is_directory())
             {
-                JunkItem item;
+                std::string folderName =
+                    entry.path().filename().string();
 
-                item.path =
-                    entry.path().string();
+                if (isJunkDirectory(folderName))
+                {
+                    JunkItem item;
 
-                item.size =
-                    calculateFolderSize(item.path);
+                    item.path =
+                        entry.path().string();
 
-                junkItems.push_back(item);
+                    item.size =
+                        calculateFolderSize(item.path);
+
+                    item.isFile = false;
+
+                    junkItems.push_back(item);
+                }
+            }
+
+            else if (entry.is_regular_file())
+            {
+                std::string fileName =
+                    entry.path().filename().string();
+
+                if (isJunkFile(fileName))
+                {
+                    JunkItem item;
+
+                    item.path =
+                        entry.path().string();
+
+                    item.size =
+                        entry.file_size();
+
+                    item.isFile = true;
+
+                    junkItems.push_back(item);
+                }
             }
         }
     }

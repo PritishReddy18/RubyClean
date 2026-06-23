@@ -12,6 +12,7 @@ public:
 
 private:
     bool isJunkDirectory(const std::string& folderName);
+    bool isJunkFile(const std::string& fileName);
 
     uintmax_t calculateFolderSize(
         const std::string& path);

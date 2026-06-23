@@ -7,4 +7,5 @@ struct JunkItem
 {
     std::string path;
     uintmax_t size = 0;
+    bool isFile = false;
 };
