@@ -1,4 +1,5 @@
 #include <iostream>
+#include "menu/MenuRunner.h"
 #include <iomanip>
 #include <algorithm>
 #include <filesystem>
@@ -27,6 +28,15 @@ std::string formatSize(uintmax_t bytes)
 
 int main(int argc, char* argv[])
 {
+    if(argc == 1)
+    {
+        MenuRunner runner;
+
+        runner.run();
+
+        return 0;
+    }
+
     CommandParser parser;
 
     Command cmd =
