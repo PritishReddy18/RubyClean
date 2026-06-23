@@ -6,36 +6,89 @@
 
 namespace fs = std::filesystem;
 
-static std::string formatSize(uintmax_t bytes)
+std::vector<SystemJunkItem>
+SystemCleaner::getTargets()
 {
-    double size = bytes;
-
-    if(size >= 1024.0 * 1024.0 * 1024.0)
-        return std::to_string(size / 1024.0 / 1024.0 / 1024.0) + " GB";
-
-    if(size >= 1024.0 * 1024.0)
-        return std::to_string(size / 1024.0 / 1024.0) + " MB";
-
-    if(size >= 1024.0)
-        return std::to_string(size / 1024.0) + " KB";
-
-    return std::to_string(bytes) + " B";
-}
-
-std::vector<std::string> SystemCleaner::getTargets()
-{
-    std::vector<std::string> targets;
+    std::vector<SystemJunkItem> targets;
 
     const char* temp =
         std::getenv("TEMP");
 
     if(temp)
     {
-        targets.push_back(temp);
+        targets.push_back({
+            "User Temp",
+            temp,
+            0
+        });
     }
 
-    targets.push_back(
-        "C:\\Windows\\Temp");
+    targets.push_back({
+        "Windows Temp",
+        "C:\\Windows\\Temp",
+        0
+    });
+
+    const char* local =
+        std::getenv("LOCALAPPDATA");
+
+    if(local)
+    {
+        std::string localPath =
+            local;
+
+        targets.push_back({
+            "Crash Dumps",
+            localPath + "\\CrashDumps",
+            0
+        });
+
+        targets.push_back({
+            "Internet Cache",
+            localPath +
+            "\\Microsoft\\Windows\\INetCache",
+            0
+        });
+
+        targets.push_back({
+            "Thumbnail Cache",
+            localPath +
+            "\\Microsoft\\Windows\\Explorer",
+            0
+        });
+
+        targets.push_back({
+            "DirectX Shader Cache",
+            localPath + "\\D3DSCache",
+            0
+        });
+
+        targets.push_back({
+            "Windows Error Reports",
+            localPath +
+            "\\Microsoft\\Windows\\WER",
+            0
+        });
+    }
+
+    const char* appData =
+    std::getenv("APPDATA");
+
+    if(appData)
+    {
+        targets.push_back({
+            "Recent Files",
+            std::string(appData) +
+            "\\Microsoft\\Windows\\Recent",
+            0
+        });
+    }
+
+    targets.push_back({
+        "Windows Update Cache",
+        "C:\\Windows\\SoftwareDistribution\\Download",
+        0
+    });
 
     return targets;
 }
@@ -66,26 +119,19 @@ uintmax_t SystemCleaner::calculateFolderSize(
 std::vector<SystemJunkItem>
 SystemCleaner::scan()
 {
-    std::vector<SystemJunkItem> items;
-
-    auto targets =
+    auto items =
         getTargets();
 
-    for(const auto& path : targets)
+    for(auto& item : items)
     {
         try
         {
-            if(!fs::exists(path))
-                continue;
-
-            SystemJunkItem item;
-
-            item.path = path;
-
-            item.size =
-                calculateFolderSize(path);
-
-            items.push_back(item);
+            if(fs::exists(item.path))
+            {
+                item.size =
+                    calculateFolderSize(
+                        item.path);
+            }
         }
         catch(...)
         {
@@ -113,8 +159,16 @@ void SystemCleaner::clean(
 {
     for(const auto& item : items)
     {
+        std::cout
+            << "Cleaning "
+            << item.name
+            << "...\n";
+
         try
         {
+            if(!fs::exists(item.path))
+                continue;
+
             for(const auto& entry :
                 fs::directory_iterator(item.path))
             {

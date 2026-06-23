@@ -6,18 +6,44 @@
 #include <iostream>
 #include <vector>
 
+#include <sstream>
+#include <iomanip>
+
 static std::string formatSize(uintmax_t bytes)
 {
-    double size = bytes;
+    std::stringstream ss;
+
+    double size = static_cast<double>(bytes);
 
     if(size >= 1024.0 * 1024.0 * 1024.0)
-        return std::to_string(size / 1024.0 / 1024.0 / 1024.0) + " GB";
+    {
+        ss << std::fixed
+           << std::setprecision(2)
+           << size / 1024.0 / 1024.0 / 1024.0
+           << " GB";
+
+        return ss.str();
+    }
 
     if(size >= 1024.0 * 1024.0)
-        return std::to_string(size / 1024.0 / 1024.0) + " MB";
+    {
+        ss << std::fixed
+           << std::setprecision(2)
+           << size / 1024.0 / 1024.0
+           << " MB";
+
+        return ss.str();
+    }
 
     if(size >= 1024.0)
-        return std::to_string(size / 1024.0) + " KB";
+    {
+        ss << std::fixed
+           << std::setprecision(2)
+           << size / 1024.0
+           << " KB";
+
+        return ss.str();
+    }
 
     return std::to_string(bytes) + " B";
 }
@@ -104,41 +130,93 @@ void MenuRunner::run()
                     cleaner.getTotalSize(items);
 
                 std::cout
-                    << "\nSystem Junk Locations\n\n";
+                    << "\n==================================================\n"
+                    << "                System Junk Report\n"
+                    << "==================================================\n\n";
+
+                std::cout
+                    << "Name                     Size\n"
+                    << "--------------------------------------------------\n";
 
                 for(const auto& item : items)
                 {
                     std::cout
-                        << item.path
+                        << item.name;
+
+                    int spaces =
+                        25 - static_cast<int>(item.name.length());
+
+                    while(spaces-- > 0)
+                        std::cout << ' ';
+
+                    std::cout
+                        << formatSize(item.size)
                         << "\n";
                 }
 
+                std::cout
+                    << "--------------------------------------------------\n"
+                    << "Total Recoverable: "
+                    << formatSize(total)
+                    << "\n\n";
+
+                std::cout
+                    << "Locations\n"
+                    << "--------------------------------------------------\n";
+
+                for(const auto& item : items)
+                {
                     std::cout
-                        << "\nRecoverable Space: "
-                        << formatSize(total)
-                        << "\n";
+                        << item.name
+                        << "\n"
+                        << item.path
+                        << "\n\n";
+                }
 
                 char confirm;
 
                 std::cout
-                    << "\nDelete all files? (y/n): ";
+                    << "Delete all files? (y/n): ";
 
                 std::cin
                     >> confirm;
 
                 if(confirm == 'y' ||
-                   confirm == 'Y')
+                confirm == 'Y')
                 {
                     cleaner.clean(items);
 
                     std::cout
-                        << "\nCleanup completed.\n";
+                        << "\n==================================================\n"
+                        << "Cleanup completed.\n"
+                        << "Recovered Space: "
+                        << formatSize(total)
+                        << "\n"
+                        << "Locations Cleaned: "
+                        << items.size()
+                        << "\n"
+                        << "==================================================\n";
                 }
 
                 break;
             }
 
             case 6:
+            {
+                std::cout
+                    << "\n=====================================\n"
+                    << "         RubyClean v1.5.0\n"
+                    << "=====================================\n\n"
+                    << "Open Source C++ Cleanup Utility\n\n"
+                    << "Author:\n"
+                    << "PritishReddy18\n\n"
+                    << "GitHub:\n"
+                    << "https://github.com/PritishReddy18/RubyClean\n";
+
+                break;
+            }
+
+            case 7:
             {
                 return;
             }

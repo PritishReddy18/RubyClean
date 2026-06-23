@@ -1,37 +1,44 @@
 # RubyClean
 
-A simple C++ CLI tool that scans projects for common development junk folders and helps clean them up.
+A C++ utility for finding and cleaning junk files, build folders, and temporary system files.
 
 ## Features
 
-- Scan project directories
-- Detect common junk folders
-- Calculate recoverable storage size
-- Sort results by size
-- Remove detected junk folders
+* Scan project directories for junk files
+* Clean detected junk files and folders
+* Largest junk analysis
+* Project statistics
+* Export reports
+* `.rubycleanignore` support
+* Interactive desktop menu
+* System temporary file cleaner
 
-### Supported Folders
+## Supported Junk Folders
 
-- build
-- cmake-build-debug
-- cmake-build-release
-- __pycache__
-- node_modules
-- dist
-- .next
-- out
-- bin
-- obj
+* build
+* cmake-build-debug
+* cmake-build-release
+* **pycache**
+* node_modules
+* dist
+* .next
+* out
+* bin
+* obj
 
----
+## Supported Junk Files
+
+* .log
+* .tmp
+* .temp
 
 ## Build
 
 ```bash
-g++ src/main.cpp src/cli/CommandParser.cpp src/scanner/Scanner.cpp -o RubyClean.exe
+g++ src/main.cpp src/menu/Menu.cpp src/menu/MenuRunner.cpp src/system/SystemCleaner.cpp src/cli/CommandParser.cpp src/scanner/Scanner.cpp -o RubyClean.exe
 ```
 
-## Usage
+## CLI Usage
 
 ### Scan
 
@@ -45,41 +52,81 @@ RubyClean.exe scan .
 RubyClean.exe clean .
 ```
 
----
+### Largest Junk
+
+```bash
+RubyClean.exe largest .
+```
+
+### Statistics
+
+```bash
+RubyClean.exe stats .
+```
+
+### Export Report
+
+```bash
+RubyClean.exe scan . export
+```
+
+## Ignore Rules
+
+Create a file named:
+
+```text
+.rubycleanignore
+```
+
+Example:
+
+```text
+test.log
+node_modules
+cache
+```
+
+Ignored files and folders will be skipped during scans and cleanup.
+
+## Desktop Mode
+
+Launch directly:
+
+```text
+RubyClean.exe
+```
+
+Menu:
+
+```text
+1. Project Scan
+2. Project Clean
+3. Largest Junk
+4. Statistics
+5. System Clean
+6. Exit
+```
 
 ## Example Output
 
 ```text
-=====================================
-        RubyClean Report
-=====================================
+=========================================
+           RubyClean Report
+=========================================
 
-Path                                    Size
-----------------------------------------------------------
-.\test\cmake-build-debug                3.13 KB
-----------------------------------------------------------
+Type      Path                     Size
+-----------------------------------------------------
+FILE      .\test\test.temp         520 KB
 
-Total Recoverable: 3.13 KB
+-----------------------------------------------------
+Files   : 1
+Recover : 520 KB
 ```
 
-### Cleaning
+## Current Version
 
 ```text
-Delete all junk folders? (y/n): y
-
-Cleanup completed.
+v1.4.0
 ```
 
----
-
-## Future Improvements
-
-- Detect log files
-- Detect temporary files
-- Export scan reports
-- Ignore file support
-- Largest folder analysis
-
----
-
-Built while learning C++ and CLI application development.
+Have any doubts join discord : https://discord.gg/upzqsFHzzx

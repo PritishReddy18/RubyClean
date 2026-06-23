@@ -6,6 +6,7 @@
 
 struct SystemJunkItem
 {
+    std::string name;
     std::string path;
     uintmax_t size = 0;
 };
@@ -22,7 +23,7 @@ public:
         const std::vector<SystemJunkItem>& items);
 
 private:
-    std::vector<std::string> getTargets();
+    std::vector<SystemJunkItem> getTargets();
 
     uintmax_t calculateFolderSize(
         const std::string& path);

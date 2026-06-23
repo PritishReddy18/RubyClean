@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.4.0
+
+### Added
+
+* Interactive desktop menu
+* Double-click executable support
+* System Cleaner
+* TEMP directory scanning
+* Windows Temp directory scanning
+* Human-readable storage sizes (KB, MB, GB)
+
+### Improved
+
+* Cleaner project structure with menu and system modules
+* Better user experience for non-technical users
+
+### Fixed
+
+* Various scanning and ignore rule issues from previous versions
+
 ## v1.3.0
 
 ### Added
