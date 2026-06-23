@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.3.0
+
+### Added
+
+* `.rubycleanignore` support
+* Custom file and folder exclusion rules
+
+### Improved
+
+* Scan command now respects ignore rules
+* Clean command now respects ignore rules
+* Largest folder analysis now respects ignore rules
+* Statistics now respect ignore rules
+
+### Fixed
+
+* Ignore file loading and rule matching issues
+
 ## v1.2.0
 
 ### Added
